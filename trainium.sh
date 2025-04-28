@@ -4,10 +4,18 @@
 
 # Configuration file path
 CONFIG_FILE="$HOME/.aws/trainium-workshop.conf"
-REGION="us-west-2"
-INSTANCE_TYPE="trn1.2xlarge"
-SECURITY_GROUP_NAME="trainium-workshop-sg"
-KEY_NAME="trainium-workshop-key"
+
+# Default values - these will be overridden by config file if it exists
+DEFAULT_REGION="us-west-2"
+DEFAULT_INSTANCE_TYPE="trn1.2xlarge"
+DEFAULT_SECURITY_GROUP_NAME="trainium-workshop-sg"
+DEFAULT_KEY_NAME="trainium-workshop-key"
+
+# Set initial values to defaults
+REGION="$DEFAULT_REGION"
+INSTANCE_TYPE="$DEFAULT_INSTANCE_TYPE"
+SECURITY_GROUP_NAME="$DEFAULT_SECURITY_GROUP_NAME"
+KEY_NAME="$DEFAULT_KEY_NAME"
 
 # Create directories if they don't exist
 mkdir -p "$HOME/.aws"
@@ -53,7 +61,23 @@ load_config() {
         echo "Configuration loaded from $CONFIG_FILE"
     else
         echo "No configuration file found at $CONFIG_FILE"
-        echo "Run 'setup' command first to create configuration."
+        echo "Using default values for configuration. Will create config file with defaults."
+        # Create a config file with default values
+        {
+            echo "# AWS Trainium Workshop Configuration"
+            echo "# Created on $(date)"
+            echo "REGION=\"$DEFAULT_REGION\""
+            echo "INSTANCE_TYPE=\"$DEFAULT_INSTANCE_TYPE\""
+            echo "SECURITY_GROUP_NAME=\"$DEFAULT_SECURITY_GROUP_NAME\""
+            echo "KEY_NAME=\"$DEFAULT_KEY_NAME\""
+            echo "# The following values will be populated by the setup command"
+            echo "SECURITY_GROUP_ID=\"\""
+            echo "KEY_FILE=\"\""
+            echo "INSTANCE_ID=\"\""
+            echo "PUBLIC_IP=\"\""
+            echo "AMI_ID=\"\""
+        } > "$CONFIG_FILE"
+        echo "Created configuration file with default values at $CONFIG_FILE"
     fi
 }
 

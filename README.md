@@ -1,8 +1,3 @@
-## Appendix A: Local Development Environment for NKI Simulation
-
-This appendix provides instructions for setting up a local environment for developing and testing NKI kernels using the simulation functionality, without needing access to actual Trainium hardware.
-
-### System Requirements
 
 - Python 3.9 or later (Python 3.8 support is being deprecated as of 2025)
 - pip (Python package manager)
@@ -115,7 +110,7 @@ If you encounter installation issues:
 2. **Profile on CPU/GPU**: Optimize your kernels before deploying to Trainium
 3. **Deploy to Trainium**: After local testing, move to Trainium hardware for final testing and performance tuning
 
-This workflow allows you to develop NKI kernels efficiently without continuously needing access to Trainium hardware.# AWS 101 for Trainium Development Workshop
+# AWS 101 for Trainium Development Workshop
 
 ## Introduction
 
@@ -1524,7 +1519,128 @@ We value your feedback! Please share your experience and suggestions to help us 
 
 ---
 
-## Appendix B: Quick Reference
+## Appendices
+
+### Appendix A: Local Development Environment for NKI Simulation
+
+This appendix provides instructions for setting up a local environment for developing and testing NKI kernels using the simulation functionality, without needing access to actual Trainium hardware.
+
+#### System Requirements
+
+- Python 3.9 or later (Python 3.8 support is being deprecated as of 2025)
+- pip (Python package manager)
+- CUDA toolkit (optional, for GPU development)
+
+#### Setting Up the Environment
+
+##### For macOS:
+
+```bash
+# Create a virtual environment
+python3 -m venv neuron-env
+source neuron-env/bin/activate
+
+# Install PyTorch
+pip install torch torchvision
+
+# Install AWS Neuron SDK dependencies (latest as of April 2025)
+pip install "neuronx-cc==2.*" packaging "torch-neuronx==2.0.*"
+```
+
+##### For Linux:
+
+```bash
+# Create a virtual environment
+python3 -m venv neuron-env
+source neuron-env/bin/activate
+
+# Install PyTorch
+pip install torch torchvision
+
+# Install AWS Neuron SDK dependencies (latest as of April 2025)
+pip install "neuronx-cc==2.*" packaging "torch-neuronx==2.0.*"
+```
+
+##### For Windows (using Anaconda):
+
+```bash
+# Create a conda environment
+conda create -n neuron-env python=3.9
+conda activate neuron-env
+
+# Install PyTorch
+conda install pytorch torchvision -c pytorch
+
+# Install AWS Neuron SDK dependencies (latest as of April 2025)
+pip install "neuronx-cc==2.*" packaging "torch-neuronx==2.0.*"
+```
+
+#### Verifying the Installation
+
+Create a test script called `test_neuron_sdk.py`:
+
+```python
+# Verify Neuron SDK installation
+try:
+    import torch
+    import torch_neuronx
+    import torch_neuronx.experimental.nki as nki
+    
+    print("PyTorch version:", torch.__version__)
+    print("torch_neuronx version:", torch_neuronx.__version__)
+    print("NKI module available:", "Yes" if hasattr(torch_neuronx.experimental, "nki") else "No")
+    
+    # Test NKI simulator functionality
+    @nki.kernel
+    def simple_test_kernel(inputs, outputs):
+        outputs[0].copy_(inputs[0] * 2)
+        return True
+    
+    # Create test tensors
+    input_tensor = torch.tensor([1.0, 2.0, 3.0])
+    output_tensor = torch.zeros(3)
+    
+    # Run simulation
+    success = nki.simulate_kernel(simple_test_kernel, [input_tensor], [output_tensor])
+    
+    if success:
+        print("NKI Simulator test passed!")
+        print("Output:", output_tensor)
+    else:
+        print("NKI Simulator test failed!")
+        
+except ImportError as e:
+    print("Import error:", e)
+    print("Please check your installation.")
+```
+
+Run the test script:
+
+```bash
+python test_neuron_sdk.py
+```
+
+#### Troubleshooting
+
+If you encounter installation issues:
+
+1. Make sure your PyTorch version is compatible with the torch-neuronx version
+2. For import errors, check that all packages are installed in the same environment
+3. If you get a "module not found" error for torch_neuronx, try:
+   ```bash
+   pip uninstall torch-neuronx
+   pip install --force-reinstall "torch-neuronx==2.0.*"
+   ```
+
+#### Development Workflow
+
+1. **Develop and test locally**: Use `nki.simulate_kernel` to test kernels on your local machine
+2. **Profile on CPU/GPU**: Optimize your kernels before deploying to Trainium
+3. **Deploy to Trainium**: After local testing, move to Trainium hardware for final testing and performance tuning
+
+This workflow allows you to develop NKI kernels efficiently without continuously needing access to Trainium hardware.
+
+### Appendix B: Quick Reference
 
 This quick reference card summarizes the key commands used throughout this workshop.
 
