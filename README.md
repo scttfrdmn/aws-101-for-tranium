@@ -436,10 +436,9 @@ If planning to use a different region, check availability before proceeding.
 AWS Deep Learning AMIs (DLAMI) come pre-configured with ML frameworks:
 
 ```bash
-# Find the latest Neuron DLAMI for Trainium in us-west-2
+# Find the latest Neuron DLAMI for Trainium
 # As of April 2025, look for Ubuntu 22.04 DLAMIs which support both Trn1 and Trn2
 aws ec2 describe-images \
-    --region us-west-2 \
     --owners amazon \
     --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
     --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name,Description]" \
@@ -447,7 +446,6 @@ aws ec2 describe-images \
 
 # If no Ubuntu 22.04 DLAMI is found, fall back to Ubuntu 20.04 DLAMIs
 aws ec2 describe-images \
-    --region us-west-2 \
     --owners amazon \
     --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 20.04)*" \
     --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name,Description]" \
@@ -463,7 +461,6 @@ To save the AMI ID to a variable for easy use in the next steps (RECOMMENDED):
 ```bash
 # Save the AMI ID to a variable (this will find and store the actual ID automatically)
 export NEURON_AMI_ID=$(aws ec2 describe-images \
-    --region us-west-2 \
     --owners amazon \
     --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
     --query "sort_by(Images, &CreationDate)[-1].ImageId" \
@@ -475,7 +472,6 @@ echo "Using AMI: $NEURON_AMI_ID"
 # If the output is empty or says "None", try the Ubuntu 20.04 version:
 if [ -z "$NEURON_AMI_ID" ] || [ "$NEURON_AMI_ID" = "None" ]; then
     export NEURON_AMI_ID=$(aws ec2 describe-images \
-        --region us-west-2 \
         --owners amazon \
         --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 20.04)*" \
         --query "sort_by(Images, &CreationDate)[-1].ImageId" \
@@ -491,9 +487,8 @@ Alternatively, you can search for the Hugging Face Neuron Deep Learning AMI in t
 Security best practice: We'll create a security group that only allows SSH access from your current IP address:
 
 ```bash
-# Create a security group for Trainium instances in us-west-2
+# Create a security group for Trainium instances
 aws ec2 create-security-group \
-    --region us-west-2 \
     --group-name trainium-workshop-sg \
     --description "Security group for Trainium workshop" \
     --output json
@@ -504,7 +499,6 @@ echo "Your public IP: $MY_IP (SSH access will be restricted to this IP only)"
 
 # Allow SSH access from your IP only for better security
 aws ec2 authorize-security-group-ingress \
-    --region us-west-2 \
     --group-name trainium-workshop-sg \
     --protocol tcp \
     --port 22 \
@@ -520,14 +514,12 @@ aws ec2 authorize-security-group-ingress \
 > 
 > # First, get your security group ID
 > SG_ID=$(aws ec2 describe-security-groups \
->     --region us-west-2 \
 >     --group-names trainium-workshop-sg \
 >     --query "SecurityGroups[0].GroupId" \
 >     --output text)
 > 
 > # Then, add a new rule for your current IP
 > aws ec2 authorize-security-group-ingress \
->     --region us-west-2 \
 >     --group-id $SG_ID \
 >     --protocol tcp \
 >     --port 22 \
@@ -539,11 +531,10 @@ aws ec2 authorize-security-group-ingress \
 ⚠️ **CRITICAL WARNING: YOU MUST USE A REAL AMI ID, NOT THE PLACEHOLDER** ⚠️
 
 ```bash
-# Launch a Trainium instance in us-west-2
+# Launch a Trainium instance
 # DO NOT USE ami-0123456789abcdef - THIS IS JUST A PLACEHOLDER!
 # Use your actual AMI ID from the previous step
 aws ec2 run-instances \
-    --region us-west-2 \
     --image-id $NEURON_AMI_ID \
     --instance-type trn1.2xlarge \
     --count 1 \
@@ -567,7 +558,6 @@ Save the `InstanceId` from the output for later use:
 ```bash
 # Save the instance ID to a variable
 export INSTANCE_ID=$(aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=pending,running" \
     --query "Reservations[0].Instances[0].InstanceId" \
     --output text)
@@ -581,10 +571,9 @@ echo "Instance ID: $INSTANCE_ID"
 Launch templates make it easier to launch instances with the same configuration:
 
 ```bash
-# Create a launch template in us-west-2
+# Create a launch template
 # IMPORTANT: Replace this placeholder with your actual AMI ID
 aws ec2 create-launch-template \
-    --region us-west-2 \
     --launch-template-name TrainiumTemplate \
     --version-description "Initial version" \
     --launch-template-data '{
@@ -611,7 +600,6 @@ Note: Make sure you've defined the `$SECURITY_GROUP_ID` and `$NEURON_AMI_ID` var
 ```bash
 # Get security group ID
 export SECURITY_GROUP_ID=$(aws ec2 describe-security-groups \
-    --region us-west-2 \
     --group-names trainium-workshop-sg \
     --query "SecurityGroups[0].GroupId" \
     --output text)
@@ -623,7 +611,6 @@ To launch an instance using the template:
 
 ```bash
 aws ec2 run-instances \
-    --region us-west-2 \
     --launch-template LaunchTemplateName=TrainiumTemplate \
     --output json
 ```
@@ -635,16 +622,14 @@ aws ec2 run-instances \
 ### Getting Instance Information
 
 ```bash
-# Find your instance's public IP in us-west-2
+# Find your instance's public IP
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running" \
     --query "Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]" \
     --output table
 
 # Save the public IP address to an environment variable for easier use
 export INSTANCE_IP=$(aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running" \
     --query "Reservations[0].Instances[0].PublicIpAddress" \
     --output text)
@@ -992,22 +977,19 @@ See Appendix A for instructions on setting up a local environment for NKI simula
 To effectively manage your Trainium instances, you'll need to know how to list, stop, start, and terminate them. Here's how to view your instances:
 
 ```bash
-# List all instances in us-west-2
+# List all instances
 aws ec2 describe-instances \
-    --region us-west-2 \
     --query "Reservations[*].Instances[*].[InstanceId,InstanceType,State.Name,Tags[?Key=='Name'].Value|[0]]" \
     --output table
 
-# List only running instances in us-west-2
+# List only running instances
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=instance-state-name,Values=running" \
     --query "Reservations[*].Instances[*].[InstanceId,InstanceType,PublicIpAddress,Tags[?Key=='Name'].Value|[0]]" \
     --output table
 
 # List only your workshop instances
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" \
     --query "Reservations[*].Instances[*].[InstanceId,InstanceType,State.Name,PublicIpAddress]" \
     --output table
@@ -1020,12 +1002,10 @@ Stopping an instance preserves its state but halts compute charges. The instance
 ```bash
 # Stop an instance by ID
 aws ec2 stop-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef
 
 # Verify it's stopping
 aws ec2 describe-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef \
     --query "Reservations[*].Instances[*].[InstanceId,State.Name]" \
     --output table
@@ -1038,24 +1018,20 @@ To continue your work on a previously stopped instance:
 ```bash
 # Start the stopped instance
 aws ec2 start-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef
 
 # Wait for it to be fully running
 aws ec2 wait instance-running \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef
 
 # Get the new public IP (it will change after stopping/starting)
 aws ec2 describe-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef \
     --query "Reservations[*].Instances[*].[PublicIpAddress]" \
     --output text
 
 # Update your instance IP environment variable
 export INSTANCE_IP=$(aws ec2 describe-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef \
     --query "Reservations[0].Instances[0].PublicIpAddress" \
     --output text)
@@ -1066,14 +1042,12 @@ export INSTANCE_IP=$(aws ec2 describe-instances \
 ```bash
 # Find instances by name tag
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" \
     --query "Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress]" \
     --output table
 
 # Find instances by type
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=instance-type,Values=trn1.2xlarge" \
     --query "Reservations[*].Instances[*].[InstanceId,State.Name,Tags[?Key=='Name'].Value|[0]]" \
     --output table
@@ -1086,12 +1060,10 @@ Terminating an instance permanently deletes it and its data. This cannot be undo
 ```bash
 # Terminate an instance
 aws ec2 terminate-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef
 
 # Verify it's terminating
 aws ec2 describe-instances \
-    --region us-west-2 \
     --instance-ids i-0123456789abcdef \
     --query "Reservations[*].Instances[*].[InstanceId,State.Name]" \
     --output table
@@ -1154,40 +1126,36 @@ When you're done with the workshop, follow these steps to avoid unnecessary char
 ```bash
 # List all running instances first to verify what will be terminated
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running,stopped" \
     --query "Reservations[*].Instances[*].[InstanceId,InstanceType,State.Name]" \
     --output table
 
 # Then terminate the instances
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running,stopped" \
     --query "Reservations[*].Instances[*].InstanceId" \
-    --output text | xargs -n1 aws ec2 terminate-instances --instance-ids --region us-west-2
+    --output text | xargs -n1 aws ec2 terminate-instances --instance-ids
 ```
 
 2. Delete any persistent resources:
 ```bash
 # Delete launch template
-aws ec2 delete-launch-template --region us-west-2 --launch-template-name TrainiumTemplate
+aws ec2 delete-launch-template --launch-template-name TrainiumTemplate
 
 # Delete security group (only works if no instances are using it)
-aws ec2 delete-security-group --region us-west-2 --group-name trainium-workshop-sg
+aws ec2 delete-security-group --group-name trainium-workshop-sg
 ```
 
 3. Verify all resources have been deleted:
 ```bash
 # Check for any remaining instances
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" \
     --query "Reservations[*].Instances[*].[InstanceId,State.Name]" \
     --output table
 
 # Check for launch templates
 aws ec2 describe-launch-templates \
-    --region us-west-2 \
     --filters "Name=launch-template-name,Values=TrainiumTemplate" \
     --query "LaunchTemplates[*].[LaunchTemplateName,CreateTime]" \
     --output table
@@ -1204,7 +1172,6 @@ aws ec2 describe-launch-templates \
    
    # Update the security group rule
    aws ec2 update-security-group-rule-descriptions-ingress \
-       --region us-west-2 \
        --group-id <your-security-group-id> \
        --ip-permissions "IpProtocol=tcp,FromPort=22,ToPort=22,IpRanges=[{CidrIp=${NEW_IP}/32,Description='SSH access from my IP'}]"
    ```
@@ -1583,13 +1550,11 @@ aws configure
 ```bash
 # List available Trainium instance types
 aws ec2 describe-instance-type-offerings \
-    --region us-west-2 \
     --filters Name=instance-type,Values=trn1*,trn2* \
     --output table
 
 # Find latest Neuron DLAMI
 aws ec2 describe-images \
-    --region us-west-2 \
     --owners amazon \
     --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
     --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name]" \
@@ -1597,7 +1562,6 @@ aws ec2 describe-images \
 
 # Launch Trainium instance (use actual AMI ID)
 aws ec2 run-instances \
-    --region us-west-2 \
     --image-id $NEURON_AMI_ID \
     --instance-type trn1.2xlarge \
     --key-name trainium-workshop-key \
@@ -1606,24 +1570,20 @@ aws ec2 run-instances \
 
 # Get instance details
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running" \
     --query "Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]" \
     --output table
 
 # Stop instance
 aws ec2 stop-instances \
-    --region us-west-2 \
     --instance-ids $INSTANCE_ID
 
 # Start instance
 aws ec2 start-instances \
-    --region us-west-2 \
     --instance-ids $INSTANCE_ID
 
 # Terminate instance
 aws ec2 terminate-instances \
-    --region us-west-2 \
     --instance-ids $INSTANCE_ID
 ```
 
@@ -1671,10 +1631,9 @@ python hello_trainium.py
 ```bash
 # Terminate all workshop instances
 aws ec2 describe-instances \
-    --region us-west-2 \
     --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running,stopped" \
     --query "Reservations[*].Instances[*].InstanceId" \
-    --output text | xargs -n1 aws ec2 terminate-instances --instance-ids --region us-west-2
+    --output text | xargs -n1 aws ec2 terminate-instances --instance-ids
 
 # Remove monitoring cron job
 ./setup-cron-monitor.sh remove
