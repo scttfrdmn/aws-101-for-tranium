@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This hands-on workshop is designed for computer science graduate students to get started with AWS Trainium instances for machine learning development. AWS Trainium is a custom ML accelerator chip designed by AWS specifically for training deep learning models with high performance and cost efficiency. By the end of this one-hour session, you'll be able to set up a secure AWS environment, launch Trainium instances, and run basic ML workloads.
+This hands-on workshop helps you get started with AWS Trainium instances for machine learning development. AWS Trainium is a custom ML accelerator chip designed by AWS specifically for training deep learning models with high performance and cost efficiency. By the end of this one-hour session, you'll be able to set up a secure AWS environment, launch Trainium instances, and run basic ML workloads.
 
 ### What You'll Accomplish
 
@@ -1305,7 +1305,7 @@ These automation tools provide significant advantages:
 4. **Error Prevention**: Handles complex AWS interactions with built-in error checking and validation
 5. **Accessibility**: Makes AWS Trainium development more accessible to those new to AWS
 
-These scripts are especially valuable in educational and research environments where managing AWS resources efficiently is essential for staying within budget constraints.
+These scripts are especially valuable in environments where managing AWS resources efficiently is essential for staying within budget constraints.
 
 ## 12. Common Troubleshooting and Next Steps
 
