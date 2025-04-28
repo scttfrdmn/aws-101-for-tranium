@@ -1457,11 +1457,11 @@ aws ec2 describe-launch-templates \
 
 ## 11. Trainium Management Script
 
-To further streamline your AWS Trainium instance management, we've provided a comprehensive shell script that automates many of the tasks covered in this workshop. The script [`trainium.sh`](https://github.com/scttfrdmn/aws-101-for-tranium/blob/master/trainium.sh) offers a command-line interface to manage your Trainium instances:
+To further streamline your AWS Trainium instance management, we've provided a comprehensive shell script that automates many of the tasks covered in this workshop. The script [`trainium.sh`](https://github.com/scttfrdmn/aws-101-for-tranium/blob/main/trainium.sh) offers a command-line interface to manage your Trainium instances:
 
 ```bash
 # Download the script
-wget https://raw.githubusercontent.com/scttfrdmn/aws-101-for-tranium/master/trainium.sh
+wget https://raw.githubusercontent.com/scttfrdmn/aws-101-for-tranium/main/trainium.sh
 chmod +x trainium.sh
 
 # Set up your AWS environment
@@ -1500,8 +1500,8 @@ Additionally, we provide a monitoring script that can be set up as a cron job to
 
 ```bash
 # Download the monitoring scripts from the repository
-wget https://raw.githubusercontent.com/scttfrdmn/aws-101-for-tranium/master/trainium-monitor.sh
-wget https://raw.githubusercontent.com/scttfrdmn/aws-101-for-tranium/master/setup-cron-monitor.sh
+wget https://raw.githubusercontent.com/scttfrdmn/aws-101-for-tranium/main/trainium-monitor.sh
+wget https://raw.githubusercontent.com/scttfrdmn/aws-101-for-tranium/main/setup-cron-monitor.sh
 chmod +x trainium-monitor.sh setup-cron-monitor.sh
 
 # Set up the monitoring cron job (checks every 15 minutes)
