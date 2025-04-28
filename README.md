@@ -346,7 +346,7 @@ Before attempting to launch any instances, check your account's service quotas t
 # Check your current Trainium instance limits
 aws service-quotas get-service-quota \
     --service-code ec2 \
-    --quota-code L-6222C1714 \
+    --quota-code L-2E30FD7D \
     --region us-east-1
 
 # Check your On-Demand instance limits (alternative method)
@@ -1353,7 +1353,7 @@ If your instance fails to launch:
 # Check your quota for the instance type
 aws service-quotas get-service-quota \
     --service-code ec2 \
-    --quota-code L-6222C1714 \
+    --quota-code L-2E30FD7D \
     --region us-west-2
 
 # Verify the AMI is available in your region
