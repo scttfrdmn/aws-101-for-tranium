@@ -1,118 +1,4 @@
-## Appendix B: Quick Reference
-
-This quick reference card summarizes the key commands used throughout this workshop.
-
-### AWS CLI Setup & Configuration
-
-```bash
-# Install AWS CLI (macOS with Homebrew)
-brew install awscli
-
-# Configure AWS CLI
-aws configure
-```
-
-### Instance Management
-
-```bash
-# List available Trainium instance types
-aws ec2 describe-instance-type-offerings \
-    --region us-west-2 \
-    --filters Name=instance-type,Values=trn1*,trn2* \
-    --output table
-
-# Find latest Neuron DLAMI
-aws ec2 describe-images \
-    --region us-west-2 \
-    --owners amazon \
-    --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
-    --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name]" \
-    --output table
-
-# Launch Trainium instance (use actual AMI ID)
-aws ec2 run-instances \
-    --region us-west-2 \
-    --image-id $NEURON_AMI_ID \
-    --instance-type trn1.2xlarge \
-    --key-name trainium-workshop-key \
-    --security-groups trainium-workshop-sg \
-    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=TrainiumWorkshop}]'
-
-# Get instance details
-aws ec2 describe-instances \
-    --region us-west-2 \
-    --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running" \
-    --query "Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]" \
-    --output table
-
-# Stop instance
-aws ec2 stop-instances \
-    --region us-west-2 \
-    --instance-ids $INSTANCE_ID
-
-# Start instance
-aws ec2 start-instances \
-    --region us-west-2 \
-    --instance-ids $INSTANCE_ID
-
-# Terminate instance
-aws ec2 terminate-instances \
-    --region us-west-2 \
-    --instance-ids $INSTANCE_ID
-```
-
-### SSH and File Transfer
-
-```bash
-# Connect to instance
-ssh -i ~/.ssh/trainium-workshop-key.pem ubuntu@$INSTANCE_IP
-
-# Copy file to instance
-scp -i ~/.ssh/trainium-workshop-key.pem /path/to/local/file ubuntu@$INSTANCE_IP:/path/on/remote/machine
-
-# Copy file from instance
-scp -i ~/.ssh/trainium-workshop-key.pem ubuntu@$INSTANCE_IP:/path/on/remote/machine /path/to/local/destination
-```
-
-### Neuron SDK on Instance
-
-```bash
-# Activate Neuron environment
-source activate aws_neuron_pytorch_p310
-
-# Check Neuron installation
-neuron-ls
-
-# Run a simple PyTorch model
-python hello_trainium.py
-```
-
-### Management Scripts
-
-```bash
-# Set up Trainium environment
-./trainium.sh setup
-
-# Launch Trainium instance
-./trainium.sh start
-
-# Set up auto-monitoring
-./setup-cron-monitor.sh install --interval 30
-```
-
-### Cleanup
-
-```bash
-# Terminate all workshop instances
-aws ec2 describe-instances \
-    --region us-west-2 \
-    --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running,stopped" \
-    --query "Reservations[*].Instances[*].InstanceId" \
-    --output text | xargs -n1 aws ec2 terminate-instances --instance-ids --region us-west-2
-
-# Remove monitoring cron job
-./setup-cron-monitor.sh remove
-```## Appendix A: Local Development Environment for NKI Simulation
+## Appendix A: Local Development Environment for NKI Simulation
 
 This appendix provides instructions for setting up a local environment for developing and testing NKI kernels using the simulation functionality, without needing access to actual Trainium hardware.
 
@@ -277,7 +163,7 @@ If you're new to AWS, review the [AWS Getting Started Guide](https://aws.amazon.
 
 > **Note on Placeholders**: Throughout this guide, you'll see placeholder values like `<your-instance-ip>` or AMI IDs like `ami-0123456789abcdef`. These are just examples and must be replaced with your actual values. **Never use placeholder AMI IDs in actual commands**.
 
-> **Quick Reference Card**: A single-page summary of key commands used in this workshop is available at the end of this guide in [Appendix B: Quick Reference](#appendix-b-quick-reference).
+> **Quick Reference Card**: A single-page summary of key commands used in this workshop is available in [Appendix B: Quick Reference](#appendix-b-quick-reference) at the end of this guide.
 
 ---
 
@@ -1635,3 +1521,121 @@ If you encounter issues not covered here, consult the [AWS Neuron Troubleshootin
 ## Workshop Feedback
 
 We value your feedback! Please share your experience and suggestions to help us improve this workshop.
+
+---
+
+## Appendix B: Quick Reference
+
+This quick reference card summarizes the key commands used throughout this workshop.
+
+### AWS CLI Setup & Configuration
+
+```bash
+# Install AWS CLI (macOS with Homebrew)
+brew install awscli
+
+# Configure AWS CLI
+aws configure
+```
+
+### Instance Management
+
+```bash
+# List available Trainium instance types
+aws ec2 describe-instance-type-offerings \
+    --region us-west-2 \
+    --filters Name=instance-type,Values=trn1*,trn2* \
+    --output table
+
+# Find latest Neuron DLAMI
+aws ec2 describe-images \
+    --region us-west-2 \
+    --owners amazon \
+    --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
+    --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name]" \
+    --output table
+
+# Launch Trainium instance (use actual AMI ID)
+aws ec2 run-instances \
+    --region us-west-2 \
+    --image-id $NEURON_AMI_ID \
+    --instance-type trn1.2xlarge \
+    --key-name trainium-workshop-key \
+    --security-groups trainium-workshop-sg \
+    --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=TrainiumWorkshop}]'
+
+# Get instance details
+aws ec2 describe-instances \
+    --region us-west-2 \
+    --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running" \
+    --query "Reservations[*].Instances[*].[InstanceId,PublicIpAddress,State.Name]" \
+    --output table
+
+# Stop instance
+aws ec2 stop-instances \
+    --region us-west-2 \
+    --instance-ids $INSTANCE_ID
+
+# Start instance
+aws ec2 start-instances \
+    --region us-west-2 \
+    --instance-ids $INSTANCE_ID
+
+# Terminate instance
+aws ec2 terminate-instances \
+    --region us-west-2 \
+    --instance-ids $INSTANCE_ID
+```
+
+### SSH and File Transfer
+
+```bash
+# Connect to instance
+ssh -i ~/.ssh/trainium-workshop-key.pem ubuntu@$INSTANCE_IP
+
+# Copy file to instance
+scp -i ~/.ssh/trainium-workshop-key.pem /path/to/local/file ubuntu@$INSTANCE_IP:/path/on/remote/machine
+
+# Copy file from instance
+scp -i ~/.ssh/trainium-workshop-key.pem ubuntu@$INSTANCE_IP:/path/on/remote/machine /path/to/local/destination
+```
+
+### Neuron SDK on Instance
+
+```bash
+# Activate Neuron environment
+source activate aws_neuron_pytorch_p310
+
+# Check Neuron installation
+neuron-ls
+
+# Run a simple PyTorch model
+python hello_trainium.py
+```
+
+### Management Scripts
+
+```bash
+# Set up Trainium environment
+./trainium.sh setup
+
+# Launch Trainium instance
+./trainium.sh start
+
+# Set up auto-monitoring
+./setup-cron-monitor.sh install --interval 30
+```
+
+### Cleanup
+
+```bash
+# Terminate all workshop instances
+aws ec2 describe-instances \
+    --region us-west-2 \
+    --filters "Name=tag:Name,Values=TrainiumWorkshop" "Name=instance-state-name,Values=running,stopped" \
+    --query "Reservations[*].Instances[*].InstanceId" \
+    --output text | xargs -n1 aws ec2 terminate-instances --instance-ids --region us-west-2
+
+# Remove monitoring cron job
+./setup-cron-monitor.sh remove
+```
