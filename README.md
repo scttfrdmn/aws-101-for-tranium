@@ -296,9 +296,9 @@ Create `notifications.json`:
 ]
 ```
 
-### Checking Credit Balance via CLI
+### Checking AWS Cost and Usage
 
-To check your AWS credit balance using the CLI:
+To check your AWS current month spending using the CLI:
 
 ```bash
 aws ce get-cost-and-usage \
@@ -308,7 +308,7 @@ aws ce get-cost-and-usage \
     --output table
 ```
 
-To check specifically for credits:
+To check how many AWS credits you've used this month:
 
 ```bash
 aws ce get-cost-and-usage \
