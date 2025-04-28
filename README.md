@@ -46,7 +46,7 @@ If you're new to AWS, review the [AWS Getting Started Guide](https://aws.amazon.
 
 > **Note on Placeholders**: Throughout this guide, you'll see placeholder values like `<your-instance-ip>` or AMI IDs like `ami-0123456789abcdef`. These are just examples and must be replaced with your actual values. **Never use placeholder AMI IDs in actual commands**.
 
-> **Quick Reference Card**: A single-page summary of key commands used in this workshop is available in [Appendix B: Quick Reference](#appendix-b-quick-reference) at the end of this guide.
+> **Quick Reference Card**: A single-page summary of key commands used in this workshop is available in the [Appendices](#appendices) section.
 
 ---
 
@@ -948,8 +948,6 @@ After testing on CPU, you can deploy the same kernels to Trainium hardware with 
 See Appendix A for instructions on setting up a local environment for NKI simulation development.
 
 ---
-
-## 8. Instance Management
 
 ## 8. Instance Management
 
