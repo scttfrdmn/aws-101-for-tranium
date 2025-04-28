@@ -319,6 +319,21 @@ aws ce get-cost-and-usage \
     --output table
 ```
 
+### Checking Your Remaining AWS Credit Balance
+
+To check your remaining AWS credit balance (how many credits you have left):
+
+1. Log into the [AWS Management Console](https://console.aws.amazon.com/)
+2. Navigate to "Billing and Cost Management" dashboard
+3. Select "Credits" from the left navigation pane
+4. Here you can view:
+   - Available credits
+   - Remaining balances
+   - Expiration dates
+   - Which services each credit applies to
+
+> **Note**: There is currently no AWS CLI command to directly check remaining credit balances.
+
 ---
 
 ## 4. Launching a Trainium Instance
