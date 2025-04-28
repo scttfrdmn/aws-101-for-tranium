@@ -440,14 +440,14 @@ AWS Deep Learning AMIs (DLAMI) come pre-configured with ML frameworks:
 # As of April 2025, look for Ubuntu 22.04 DLAMIs which support both Trn1 and Trn2
 aws ec2 describe-images \
     --owners amazon \
-    --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
+    --filters "Name=name,Values=*Neuron*Ubuntu*22.04*" \
     --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name,Description]" \
     --output table
 
 # If no Ubuntu 22.04 DLAMI is found, fall back to Ubuntu 20.04 DLAMIs
 aws ec2 describe-images \
     --owners amazon \
-    --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 20.04)*" \
+    --filters "Name=name,Values=*Neuron*Ubuntu*20.04*" \
     --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name,Description]" \
     --output table
 ```
@@ -462,7 +462,7 @@ To save the AMI ID to a variable for easy use in the next steps (RECOMMENDED):
 # Save the AMI ID to a variable (this will find and store the actual ID automatically)
 export NEURON_AMI_ID=$(aws ec2 describe-images \
     --owners amazon \
-    --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
+    --filters "Name=name,Values=*Neuron*Ubuntu*22.04*" \
     --query "sort_by(Images, &CreationDate)[-1].ImageId" \
     --output text)
 
@@ -473,7 +473,7 @@ echo "Using AMI: $NEURON_AMI_ID"
 if [ -z "$NEURON_AMI_ID" ] || [ "$NEURON_AMI_ID" = "None" ]; then
     export NEURON_AMI_ID=$(aws ec2 describe-images \
         --owners amazon \
-        --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 20.04)*" \
+        --filters "Name=name,Values=*Neuron*Ubuntu*20.04*" \
         --query "sort_by(Images, &CreationDate)[-1].ImageId" \
         --output text)
     echo "Using Ubuntu 20.04 AMI instead: $NEURON_AMI_ID"
@@ -1556,7 +1556,7 @@ aws ec2 describe-instance-type-offerings \
 # Find latest Neuron DLAMI
 aws ec2 describe-images \
     --owners amazon \
-    --filters "Name=name,Values=*Deep Learning Neuron AMI (Ubuntu 22.04)*" \
+    --filters "Name=name,Values=*Neuron*Ubuntu*22.04*" \
     --query "sort_by(Images, &CreationDate)[-1].[ImageId,Name]" \
     --output table
 
