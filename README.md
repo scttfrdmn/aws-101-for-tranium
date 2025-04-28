@@ -134,74 +134,6 @@ For security best practices, you should use an IAM user instead of your root acc
 7. Add your email address as a notification recipient
 8. Review and click "Create budget"
 
-### Using the CLI
-
-To create a budget alert using the AWS CLI (which you'll install in the next section):
-
-```bash
-aws budgets create-budget \
-    --account-id $(aws sts get-caller-identity --query 'Account' --output text) \
-    --budget file://budget.json \
-    --notifications-with-subscribers file://notifications.json
-```
-
-Create `budget.json`:
-```json
-{
-    "BudgetName": "TrainiumWorkshopBudget",
-    "BudgetLimit": {
-        "Amount": "1500",
-        "Unit": "USD"
-    },
-    "BudgetType": "COST",
-    "TimeUnit": "MONTHLY"
-}
-```
-
-Create `notifications.json`:
-```json
-[
-    {
-        "Notification": {
-            "NotificationType": "ACTUAL",
-            "ComparisonOperator": "GREATER_THAN",
-            "Threshold": 50.0,
-            "ThresholdType": "PERCENTAGE",
-            "NotificationState": "ALARM"
-        },
-        "Subscribers": [
-            {
-                "SubscriptionType": "EMAIL",
-                "Address": "your-email@example.com"
-            }
-        ]
-    }
-]
-```
-
-### Checking Credit Balance via CLI
-
-To check your AWS credit balance using the CLI:
-
-```bash
-aws ce get-cost-and-usage \
-    --time-period Start=$(date -d "first day of this month" +%Y-%m-%d),End=$(date -d "tomorrow" +%Y-%m-%d) \
-    --granularity MONTHLY \
-    --metrics UnblendedCost \
-    --output table
-```
-
-To check specifically for credits:
-
-```bash
-aws ce get-cost-and-usage \
-    --time-period Start=$(date -d "first day of this month" +%Y-%m-%d),End=$(date -d "tomorrow" +%Y-%m-%d) \
-    --granularity MONTHLY \
-    --metrics UnblendedCost \
-    --filter '{"Dimensions": {"Key": "RECORD_TYPE", "Values": ["Credit"]}}' \
-    --output table
-```
-
 ---
 
 ## 3. Installing and Configuring AWS CLI
@@ -315,6 +247,76 @@ cp ~/.aws/credentials ~/.aws/credentials.backup
 
 # For Windows (PowerShell)
 Copy-Item -Path "$env:USERPROFILE\.aws\credentials" -Destination "$env:USERPROFILE\.aws\credentials.backup"
+```
+
+### Using the AWS CLI for Budget Alerts
+
+Now that you have the AWS CLI installed, you can also create budget alerts and check your credit balance using the command line:
+
+To create a budget alert:
+
+```bash
+aws budgets create-budget \
+    --account-id $(aws sts get-caller-identity --query 'Account' --output text) \
+    --budget file://budget.json \
+    --notifications-with-subscribers file://notifications.json
+```
+
+Create `budget.json`:
+```json
+{
+    "BudgetName": "TrainiumWorkshopBudget",
+    "BudgetLimit": {
+        "Amount": "1500",
+        "Unit": "USD"
+    },
+    "BudgetType": "COST",
+    "TimeUnit": "MONTHLY"
+}
+```
+
+Create `notifications.json`:
+```json
+[
+    {
+        "Notification": {
+            "NotificationType": "ACTUAL",
+            "ComparisonOperator": "GREATER_THAN",
+            "Threshold": 50.0,
+            "ThresholdType": "PERCENTAGE",
+            "NotificationState": "ALARM"
+        },
+        "Subscribers": [
+            {
+                "SubscriptionType": "EMAIL",
+                "Address": "your-email@example.com"
+            }
+        ]
+    }
+]
+```
+
+### Checking Credit Balance via CLI
+
+To check your AWS credit balance using the CLI:
+
+```bash
+aws ce get-cost-and-usage \
+    --time-period Start=$(date -d "first day of this month" +%Y-%m-%d),End=$(date -d "tomorrow" +%Y-%m-%d) \
+    --granularity MONTHLY \
+    --metrics UnblendedCost \
+    --output table
+```
+
+To check specifically for credits:
+
+```bash
+aws ce get-cost-and-usage \
+    --time-period Start=$(date -d "first day of this month" +%Y-%m-%d),End=$(date -d "tomorrow" +%Y-%m-%d) \
+    --granularity MONTHLY \
+    --metrics UnblendedCost \
+    --filter '{"Dimensions": {"Key": "RECORD_TYPE", "Values": ["Credit"]}}' \
+    --output table
 ```
 
 ---
