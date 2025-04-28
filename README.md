@@ -1188,7 +1188,7 @@ To help manage costs, we've provided a monitoring script that can automatically 
 #### Setting Up the Monitor
 
 1. Download the monitoring scripts:
-   - `trainium-monitor.sh` - The main monitoring script
+   - `trainium-monitor.sh` - The main monitoring script that monitors both CPU and Trainium chip usage
    - `setup-cron-monitor.sh` - Script to set up the cron job
 
 2. Make the scripts executable:
@@ -1399,11 +1399,13 @@ chmod +x trainium-monitor.sh setup-cron-monitor.sh
 
 The monitoring system includes intelligent resource management:
 
-- **Resource Monitoring**: Checks CPU and Neuron device utilization
-- **User Awareness**: Detects if users are logged in before taking action
+- **Comprehensive Monitoring**: Checks both CPU and Trainium chip (NeuronCore) utilization
+- **User Awareness**: Detects if users are logged in before taking action 
+- **Smart Idle Detection**: Instances are considered idle only when both CPU and Trainium activity are low
 - **Automated Shutdown**: Stops idle instances with no active users
-- **Warning System**: Sends messages to logged-in users on idle instances
+- **Warning System**: Sends warning messages to all logged-in users on idle instances
 - **Override Option**: Can be temporarily disabled via configuration when needed
+- **Cross-Platform Compatible**: Works on both macOS and Linux systems
 
 ### Benefits of Using These Scripts
 
