@@ -253,14 +253,7 @@ Copy-Item -Path "$env:USERPROFILE\.aws\credentials" -Destination "$env:USERPROFI
 
 Now that you have the AWS CLI installed, you can also create budget alerts and check your credit balance using the command line:
 
-To create a budget alert:
-
-```bash
-aws budgets create-budget \
-    --account-id $(aws sts get-caller-identity --query 'Account' --output text) \
-    --budget file://budget.json \
-    --notifications-with-subscribers file://notifications.json
-```
+To create a budget alert, first create the required JSON files:
 
 Create `budget.json`:
 ```json
@@ -296,13 +289,30 @@ Create `notifications.json`:
 ]
 ```
 
+Then run the create-budget command:
+
+```bash
+aws budgets create-budget \
+    --account-id $(aws sts get-caller-identity --query 'Account' --output text) \
+    --budget file://budget.json \
+    --notifications-with-subscribers file://notifications.json
+```
+
 ### Checking AWS Cost and Usage
 
 To check your AWS current month spending using the CLI:
 
 ```bash
+# For Linux:
 aws ce get-cost-and-usage \
     --time-period Start=$(date -d "first day of this month" +%Y-%m-%d),End=$(date -d "tomorrow" +%Y-%m-%d) \
+    --granularity MONTHLY \
+    --metrics UnblendedCost \
+    --output table
+
+# For macOS:
+aws ce get-cost-and-usage \
+    --time-period Start=$(date -v1d +%Y-%m-%d),End=$(date -v+1d +%Y-%m-%d) \
     --granularity MONTHLY \
     --metrics UnblendedCost \
     --output table
@@ -311,8 +321,17 @@ aws ce get-cost-and-usage \
 To check how many AWS credits you've used this month:
 
 ```bash
+# For Linux:
 aws ce get-cost-and-usage \
     --time-period Start=$(date -d "first day of this month" +%Y-%m-%d),End=$(date -d "tomorrow" +%Y-%m-%d) \
+    --granularity MONTHLY \
+    --metrics UnblendedCost \
+    --filter '{"Dimensions": {"Key": "RECORD_TYPE", "Values": ["Credit"]}}' \
+    --output table
+
+# For macOS:
+aws ce get-cost-and-usage \
+    --time-period Start=$(date -v1d +%Y-%m-%d),End=$(date -v+1d +%Y-%m-%d) \
     --granularity MONTHLY \
     --metrics UnblendedCost \
     --filter '{"Dimensions": {"Key": "RECORD_TYPE", "Values": ["Credit"]}}' \
