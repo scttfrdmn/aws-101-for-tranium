@@ -1075,7 +1075,7 @@ aws ec2 describe-instances \
 
 ## 9. Cleanup and Best Practices
 
-###Preventing Unexpected AWS Spend
+### Preventing Unexpected AWS Spend
 You are charged for AWS resources that you have provisioned until you explicitly disable or terminate them. It's crucial to ensure you disable or terminate any AWS resources you no longer need to avoid incurring unnecessary charges. 
 - AWS charges for provisioned resources, not just active usage
 - An idle EC2 instance still costs money because the virtual server is reserved for you
