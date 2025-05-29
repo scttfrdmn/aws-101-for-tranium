@@ -136,7 +136,7 @@ For security best practices, you should use an IAM user instead of your root acc
 
 ---
 
-## 3. Installing and Configuring AWS CLI
+## 3. Installing and Configuring AWS Command Line Interface (CLI)
 
 The AWS Command Line Interface (CLI) allows you to interact with AWS services from the terminal. This section covers installation and setup for different operating systems.
 
