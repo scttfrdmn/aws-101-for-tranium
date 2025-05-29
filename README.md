@@ -31,7 +31,7 @@ If you're new to AWS, review the [AWS Getting Started Guide](https://aws.amazon.
 
 1. [Setting Up Your AWS Environment](#1-setting-up-your-aws-environment)
 2. [Configuring Budget Alerts](#2-configuring-budget-alerts)
-3. [Installing and Configuring AWS CLI](#3-installing-and-configuring-aws-cli)
+3. [Installing and Configuring AWS Command Line Interface (CLI)](#3-installing-and-configuring-aws-cli)
 4. [Launching a Trainium Instance](#4-launching-a-trainium-instance)
 5. [Connecting to Your Instance](#5-connecting-to-your-instance)
 6. [Setting Up Remote Development](#6-setting-up-remote-development)
@@ -1074,6 +1074,51 @@ aws ec2 describe-instances \
 ---
 
 ## 9. Cleanup and Best Practices
+
+###Preventing Unexpected AWS Spend
+You are charged for AWS resources that you have provisioned until you explicitly disable or terminate them. It's crucial to ensure you disable or terminate any AWS resources you no longer need to avoid incurring unnecessary charges. 
+- AWS charges for provisioned resources, not just active usage
+- An idle EC2 instance still costs money because the virtual server is reserved for you
+- Storage services like S3 charge for data stored, regardless of whether you access it
+- Many AWS services have both provisioning costs (having the resource) and usage costs (actively using it)
+
+**You can follow these steps to identify which AWS resources you are being billed for:**
+#### Step 1: Use the Billing Dashboard
+- Navigate to AWS Billing & Cost Management Console
+- Check "Bills" section for current month's charges
+- Review "Cost by Service" to see which services are generating costs
+- The AWS Billing & Cost Management Console shows global costs across all regions in one view – meaning you see the total charges from all regions combined. You can filter or break down costs by region if needed, but the default view is global
+
+#### Step 2: Cost Explorer Analysis
+- Use AWS Cost Explorer for detailed breakdowns
+- Filter by service, region, or time period
+- Look for unexpected or growing costs
+
+#### Step 3: Service-by-Service Inventory
+- EC2: Check running instances across all regions
+- RDS: Look for database instances (even stopped ones may charge for storage)
+- S3: Review buckets and storage usage
+- EBS: Check for unattached volumes
+- Elastic Load Balancers: Verify active load balancers
+- NAT Gateways: Often overlooked but expensive
+- Elastic IPs: Unattached IPs incur charges
+
+**NOTE: You need to check each region separately, as the AWS console is region-specific for most services. E.g., an EC2 instance in us-east-1 won't show up when you're viewing us-west-2.**
+
+#### Step 4: Use AWS Resource Groups & Tag Editor
+- Create resource groups to organize and track resources
+- Use tags consistently to identify resource ownership and purpose
+
+#### Step 5: Set Up Monitoring
+- Enable billing alerts for spending thresholds
+- Use AWS Budgets to track costs proactively
+- Consider AWS Cost Anomaly Detection
+
+#### Tips:
+- Always check all AWS regions - resources in different AS regions won't show up unless you switch regions. Even if you disable an AWS Region, charges will continue for active resources in that region until they are terminated. 
+- Use the "Resource Groups" console for a centralized view
+- Take screenshots of your initial setup so you remember what you created
+- Delete resources immediately after testing/learning exercises
 
 ### Automatic Instance Monitoring
 
